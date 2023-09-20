@@ -1,7 +1,11 @@
 # cudaformer
 
-The goal is to implement a transformer on CUDA. 
+Implement both the encoder and decoder part of the transformer algorithm. 
 
-Because my AWS instance uses a Tesla M60 I'm going to try and see if I can do a flash-attention implementation but I'm not sure if the architecture is correct for all of the optimizations to actually work. (I might end up doing something to showcase how we can create IO-aware attention though as a learning exercise). 
+The GPT-series only uses the decoder part. 
+
+I'm also interested in implemented flash-attention v1 and v2, but since my AWS AMI uses a Tesla M60 we'll see how far I can get. 
+
+I think even if I can't do the exact low-level hardware optimizations I could still show how to make attention IO-aware, since that is a very important concept for systems optimization. 
 
 
