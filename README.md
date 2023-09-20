@@ -1,4 +1,4 @@
-# transformer-CUDA 
+# cudaformer
 
 The goal is to implement a transformer on CUDA. 
 
