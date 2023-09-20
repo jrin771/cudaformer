@@ -1,10 +1,5 @@
-# from-scratch-CUDA
-Coding up AI things from scratch in CUDA 
+# flash-attention-CUDA 
 
-() Element Addition 
+The goal is to code an entire transformer architecture with Flash Attention onto a GPU Kernel before I have to leave for NYC on thursday morning. 
 
-() Matmul 
 
-() Attention 
-
-() Full Transformer Architecture 
