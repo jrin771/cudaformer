@@ -1,15 +1,26 @@
-# cudaformer
+# CUDAFORMER 
 
-Implement a full (encoder + decoder for the anki spanish-english translation dataset) transformer algorithm on a nvidia tesla m60 gpu. 
+## OVERVIEW   
+Inspired by James Lin's attempt on this, you should check that out.  
 
 
-TO-DO: 
+## INSTALLATION  
+I'll add steps for AWS since it was my first time using EC2 and that might be helpful for replication purposes.   
 
-()Fix multi-headed attention 
 
-()Make embedding -> positional encoding not suck so much 
+AWS:  
+Chmod 400 ______.pem  
+ssh -i "_____.pem" ubuntu@<IP-address> (or <DNS-address>)
 
-()Implement FNN that doesn't suck 
 
-()Connect the encoder and decoder more 
+## TROUBLE-SHOOTING  
+AWS has good guides, 
+
+
+## HOW TO RUN PROGRAMS 
+
+nvcc <program-name>.cu -o <program-name> 
+./<program-name>
+
+## LEARNING RESOURCES I USED 
 
