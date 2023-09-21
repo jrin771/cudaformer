@@ -26,3 +26,4 @@ nvcc <program-name>.cu -o <program-name>
 
 ## LEARNING RESOURCES I USED 
 
+Deeper Understanding of Positional Encoding: https://towardsdatascience.com/master-positional-encoding-part-i-63c05d90a0c3 
