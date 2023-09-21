@@ -2,14 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CHECK_CUDA(call) { \
-    cudaError_t err = call; \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA Error: %s, %s:%d\n", cudaGetErrorString(err), __FILE__, __LINE__); \
-        exit(1); \
-    } \
-}
-
 __global__ void layer_norm(float *d_input, float *d_output, float *d_gamma, float *d_beta, int N, int K, float epsilon) {
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     if (row >= N) return;
@@ -58,23 +50,21 @@ int main() {
     }
 
     float *d_input, *d_output, *d_gamma, *d_beta;
-    CHECK_CUDA(cudaMalloc((void**)&d_input, N * K * sizeof(float)));
-    CHECK_CUDA(cudaMalloc((void**)&d_output, N * K * sizeof(float)));
-    CHECK_CUDA(cudaMalloc((void**)&d_gamma, K * sizeof(float)));
-    CHECK_CUDA(cudaMalloc((void**)&d_beta, K * sizeof(float)));
+    cudaMalloc((void**)&d_input, N * K * sizeof(float));
+    cudaMalloc((void**)&d_output, N * K * sizeof(float));
+    cudaMalloc((void**)&d_gamma, K * sizeof(float));
+    cudaMalloc((void**)&d_beta, K * sizeof(float));
     
-    CHECK_CUDA(cudaMemcpy(d_input, h_input, N * K * sizeof(float), cudaMemcpyHostToDevice));
-    CHECK_CUDA(cudaMemcpy(d_gamma, h_gamma, K * sizeof(float), cudaMemcpyHostToDevice));
-    CHECK_CUDA(cudaMemcpy(d_beta, h_beta, K * sizeof(float), cudaMemcpyHostToDevice));
+    cudaMemcpy(d_input, h_input, N * K * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_gamma, h_gamma, K * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_beta, h_beta, K * sizeof(float), cudaMemcpyHostToDevice);
 
     dim3 blockDim(16, 16);
     dim3 gridDim((K + blockDim.x - 1) / blockDim.x, (N + blockDim.y - 1) / blockDim.y);
 
     layer_norm<<<gridDim, blockDim>>>(d_input, d_output, d_gamma, d_beta, N, K, epsilon);
-    CHECK_CUDA(cudaPeekAtLastError());
-    CHECK_CUDA(cudaDeviceSynchronize());
     
-    CHECK_CUDA(cudaMemcpy(h_output, d_output, N * K * sizeof(float), cudaMemcpyDeviceToHost));
+    cudaMemcpy(h_output, d_output, N * K * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Print initial randomized values and layer normalized values  
     printf("Initial Randomized Values:\n"); 
@@ -92,10 +82,10 @@ int main() {
         printf("\n");
     }
     
-    CHECK_CUDA(cudaFree(d_input));
-    CHECK_CUDA(cudaFree(d_output));
-    CHECK_CUDA(cudaFree(d_gamma));
-    CHECK_CUDA(cudaFree(d_beta));
+    cudaFree(d_input);
+    cudaFree(d_output);
+    cudaFree(d_gamma);
+    cudaFree(d_beta);
     free(h_input);
     free(h_output);
     free(h_gamma);
