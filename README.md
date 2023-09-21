@@ -19,7 +19,9 @@ AWS has good guides,
 
 ## HOW TO RUN PROGRAMS 
 
+
 nvcc <program-name>.cu -o <program-name> 
+
 ./<program-name>
 
 ## LEARNING RESOURCES I USED 
