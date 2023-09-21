@@ -2,14 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CHECK_CUDA(call) { \
-    cudaError_t err = call; \
-    if (err != cudaSuccess) { \
-        fprintf(stderr, "CUDA Error: %s, %s:%d\n", cudaGetErrorString(err), __FILE__, __LINE__); \
-        exit(1); \
-    } \
-}
-
 __global__ void softmax(float *d_input, float *d_output, int N, int K) {
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     if (row >= N) return;
@@ -41,19 +33,17 @@ int main() {
     }
 
     float *d_input, *d_output;
-    CHECK_CUDA(cudaMalloc((void**)&d_input, N * K * sizeof(float)));
-    CHECK_CUDA(cudaMalloc((void**)&d_output, N * K * sizeof(float)));
+    cudaMalloc((void**)&d_input, N * K * sizeof(float));
+    cudaMalloc((void**)&d_output, N * K * sizeof(float));
     
-    CHECK_CUDA(cudaMemcpy(d_input, h_input, N * K * sizeof(float), cudaMemcpyHostToDevice));
+    cudaMemcpy(d_input, h_input, N * K * sizeof(float), cudaMemcpyHostToDevice);
 
     dim3 blockDim(16, 16);
     dim3 gridDim((K + blockDim.x - 1) / blockDim.x, (N + blockDim.y - 1) / blockDim.y);
     
     softmax<<<gridDim, blockDim>>>(d_input, d_output, N, K);
-    CHECK_CUDA(cudaPeekAtLastError());
-    CHECK_CUDA(cudaDeviceSynchronize());
-    
-    CHECK_CUDA(cudaMemcpy(h_output, d_output, N * K * sizeof(float), cudaMemcpyDeviceToHost));
+
+    cudaMemcpy(h_output, d_output, N * K * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Print both the initial randomized values and the softmax values  
     printf("Randomized Values:\n"); 
@@ -71,8 +61,8 @@ int main() {
         printf("\n");
     }
     
-    CHECK_CUDA(cudaFree(d_input));
-    CHECK_CUDA(cudaFree(d_output));
+    cudaFree(d_input);
+    cudaFree(d_output);
     free(h_input);
     free(h_output);
 
