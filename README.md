@@ -22,7 +22,8 @@ AWS has good guides,
 
 nvcc <program-name>.cu -o <program-name> 
 
-./<program-name>
+./<program-name> 
+
 
 ## LEARNING RESOURCES I USED 
 
