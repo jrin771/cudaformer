@@ -1,5 +1,22 @@
 # CUDAFORMER 
 
+
+What is it? Implementing the transformer architecture on an NVIDIA Tesla M60 GPU. 
+
+Why? James Lin (Transformer-CUDA on github) started doing it a few days ago and I thought it was a great idea to learn AI systems, parallel programming, CUDA, and to do a cool project.  
+
+What do you have so far? I've implemented multi-head attention (the main building block of the transformer) in CUDA and plan to 
+
+
+
+
+
+
+
+
+
+## TO-DO 
+I plan to clean this up a lot more in the future. 
 ## OVERVIEW   
 Inspired by James Lin's attempt on this, you should check that out.  
 
