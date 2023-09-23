@@ -16,7 +16,6 @@ __global__ void fused_multi_head_attention(
     int d = tid % D;
 
     int head_dim = D / num_heads;
-    if (head_dim == 0 || num_heads == 0) return;
 
     float* dot_products = smem;
     float* softmax_weights = smem + T;
