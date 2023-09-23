@@ -64,6 +64,19 @@ __global__ void fused_multi_head_attention(
     }
 }
 
+
+//I might just get rid of this since this is probably overkill. 
+
+// LCG values for a simple PRNG
+unsigned long a = 1664525;
+unsigned long c = 1013904223;
+unsigned long seed = 1;  // Can be any value
+
+float pseudo_rand() {
+    seed = (a * seed + c);  // Update the seed for next iteration
+    return (seed & 0xFFFFFFF) / (float)0xFFFFFFF;  // Return a float between 0 and 1
+}
+
 int main() {
     int T = 4, D = 8;
     int num_elements = T * D;
@@ -71,12 +84,17 @@ int main() {
     // Allocate host memory
     float h_q[num_elements], h_k[num_elements], h_v[num_elements], h_wq[D], h_wk[D], h_wv[D], h_wo[D], h_output[num_elements];
 
-    // Initialize host data (you can replace this with real data)
+   // Initialize host data with random floats between 0 and 1
     for (int i = 0; i < num_elements; ++i) {
-        h_q[i] = h_k[i] = h_v[i] = 1.0f;
+        h_q[i] = pseudo_rand();
+        h_k[i] = pseudo_rand();
+        h_v[i] = pseudo_rand();
     }
     for (int i = 0; i < D; ++i) {
-        h_wq[i] = h_wk[i] = h_wv[i] = h_wo[i] = 1.0f;
+        h_wq[i] = pseudo_rand();
+        h_wk[i] = pseudo_rand();
+        h_wv[i] = pseudo_rand();
+        h_wo[i] = pseudo_rand();
     }
 
     // Allocate device memory
