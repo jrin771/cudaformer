@@ -1,3 +1,6 @@
+//code here sucks will rewrite soon. 
+
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
