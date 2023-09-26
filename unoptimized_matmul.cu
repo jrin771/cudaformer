@@ -51,4 +51,31 @@ int main() {
     cudaMemcpy(h_C, d_C, M * P * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Print and cleanup code (Same as your original code)
+    printf("--------\n");
+    printf("Matrix A:\n--------\n");
+    for(int i = 0; i < M; ++i) {
+            for(int j = 0; j < N; ++j) {
+                    printf("%f ", h_A[i * N + j]);
+            }
+            printf("\n");
+    }
+      
+    printf("--------\n");
+    printf("Matrix B:\n--------\n");
+    for(int i = 0; i < N; ++i) {
+            for(int j = 0; j < P; ++j) {
+                    printf("%f ", h_B[i * P + j]);
+            }
+            printf("\n");
+    }
+        
+    printf("--------\n");
+    printf("Matrix C:\n--------\n");
+    for(int i = 0; i < M; ++i) {
+            for(int j = 0; j < P; ++j) {
+                    printf("%f ", h_C[i * P + j]);
+            }
+            printf("\n");
+    }
+    printf("--------\n");
 }
