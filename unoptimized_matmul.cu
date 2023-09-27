@@ -27,7 +27,7 @@ int main() {
     float elapsedTime; 
 
     cudaEventCreate(&start);
-    cudaEventCreate(&stop)
+    cudaEventCreate(&stop);
 
     h_A = (float*)malloc(M * N * sizeof(float));
     h_B = (float*)malloc(N * P * sizeof(float));
