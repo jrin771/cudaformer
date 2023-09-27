@@ -53,6 +53,9 @@ int main() {
     cudaEvent_t start, stop; 
     float elapsedTime; 
 
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
     h_A = (float*)malloc(M * N * sizeof(float));
     h_B = (float*)malloc(N * P * sizeof(float));
     h_C = (float*)malloc(M * P * sizeof(float));
@@ -133,5 +136,9 @@ int main() {
 
     cudaFree(d_A); cudaFree(d_B); cudaFree(d_C); 
     cudaFree(h_A); cudaFree(h_B); cudaFree(h_C);
+
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
+
     return 0;
 }
