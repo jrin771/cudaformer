@@ -43,22 +43,33 @@ __global__ void matMulTiled(float *d_A, float *d_B, float *d_C, int M, int N, in
     if (row < M && col < P)
         d_C[row * P + col] = sum;
 }
-
+void randomInitialize(float *data, int size) {
+    for (int i = 0; i < size; ++i) {
+        data[i] = (float) rand() / RAND_MAX;
+    }
+}
 int main() {
     // Dimension definitions and data setup
     int M = 16, N = 16, P = 16;
-    float *h_A, *h_B, *h_C, *d_A, *d_B, *d_C;
+    float *h_A, *h_B, *h_C, *d_A, *d_B, *d_C;  
+    cudaEvent_t start, stop;
+    float elapsedTime; 
+
+    cudaEventCreate(&start); 
+    cudaEventCreate(&stop));
 
     h_A = (float*)malloc(M * N * sizeof(float));
     h_B = (float*)malloc(N * P * sizeof(float));
     h_C = (float*)malloc(M * P * sizeof(float));
 
+    cudaEventRecord(start, 0);
+
     cudaMalloc((void**)&d_A, M * N * sizeof(float));
     cudaMalloc((void**)&d_B, N * P * sizeof(float));
     cudaMalloc((void**)&d_C, M * P * sizeof(float));
 
-    // Initialize matrices
-    // ... (Same as your original code)
+    randomInitialize(h_A, M * N); 
+    randomInitialize(h_B, N * P); 
 
     cudaMemcpy(d_A, h_A, M * N * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, N * P * sizeof(float), cudaMemcpyHostToDevice);
@@ -70,6 +81,7 @@ int main() {
     cudaMemcpy(h_C, d_C, M * P * sizeof(float), cudaMemcpyDeviceToHost);
 
     // print statements (which should also include the print times for the other CUDA stuff)
+    printf("--------\n");
     printf("Matrix A:\n--------\n");
     for(int i = 0; i < M; ++i) {
             for(int j = 0; j < N; ++j) {
