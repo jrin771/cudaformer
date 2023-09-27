@@ -1,4 +1,4 @@
-//code here sucks will rewrite soon. 
+//code here sucks will rewrite once fundamentals are all done and explained well  
 
 
 #include <math.h>
