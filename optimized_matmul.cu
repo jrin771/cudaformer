@@ -1,7 +1,7 @@
 //the optimized matmul lol. I'll copy everything from here once I have it working for once. 
 #include <stdio.h>
 #include <stdlib.h>
-#include <cuda_runtime.h> //modify this in my nano version lolll. also i'll need the proper print out stuff
+#include <cuda_runtime.h> 
 
 // Tiling size
 #define TILE_SIZE 4
@@ -69,5 +69,35 @@ int main() {
     matMulTiled<<<gridDim, blockDim>>>(d_A, d_B, d_C, M, N, P);
     cudaMemcpy(h_C, d_C, M * P * sizeof(float), cudaMemcpyDeviceToHost);
 
-    // Print and cleanup code (same as your original code)
+    // print statements (which should also include the print times for the other CUDA stuff)
+    printf("Matrix A:\n--------\n");
+    for(int i = 0; i < M; ++i) {
+            for(int j = 0; j < N; ++j) {
+                    printf("%f ", h_A[i * N + j]);
+            }
+            printf("\n");
+    }
+      
+    printf("--------\n");
+    printf("Matrix B:\n--------\n");
+    for(int i = 0; i < N; ++i) {
+             for(int j = 0; j < P; ++j) {
+                    printf("%f ", h_B[i * P + j]);
+               }
+            printf("\n");
+    }
+        
+    printf("--------\n");
+    printf("Matrix C:\n--------\n");
+    for(int i = 0; i < M; ++i) {
+            for(int j = 0; j < P; ++j) {
+                    printf("%f ", h_C[i * P + j]);
+            }
+            printf("\n");
+    }
+    printf("--------\n");
+
+    cudaFree(d_A); cudaFree(d_B); cudaFree(d_C); 
+    cudaFree(h_A); cudaFree(h_B); cudaFree(h_C);
+    return 0;
 }
