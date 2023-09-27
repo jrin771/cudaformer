@@ -1,12 +1,10 @@
-//the optimized matmul lol. I'll copy everything from here once I have it working for once. 
 #include <stdio.h>
 #include <stdlib.h>
 #include <cuda_runtime.h> 
 
-// Tiling size
 #define TILE_SIZE 4
 
-__global__ void matMulTiled(float *d_A, float *d_B, float *d_C, int M, int N, int P) {
+__global__ void optimizedMatMul(float *d_A, float *d_B, float *d_C, int M, int N, int P) {
     __shared__ float ds_A[TILE_SIZE][TILE_SIZE];
     __shared__ float ds_B[TILE_SIZE][TILE_SIZE];
 
@@ -30,7 +28,7 @@ __global__ void matMulTiled(float *d_A, float *d_B, float *d_C, int M, int N, in
 
         __syncthreads();
 
-        // Compute inner product for this tile
+        // Compute inner product for this tile. 
         #pragma unroll
         for (int j = 0; j < TILE_SIZE; ++j) {
             sum += ds_A[threadIdx.y][j] * ds_B[j][threadIdx.x];
@@ -51,12 +49,9 @@ void randomInitialize(float *data, int size) {
 int main() {
     // Dimension definitions and data setup
     int M = 16, N = 16, P = 16;
-    float *h_A, *h_B, *h_C, *d_A, *d_B, *d_C;  
-    cudaEvent_t start, stop;
+    float *h_A, *h_B, *h_C, *d_A, *d_B, *d_C;   
+    cudaEvent_t start, stop; 
     float elapsedTime; 
-
-    cudaEventCreate(&start); 
-    cudaEventCreate(&stop));
 
     h_A = (float*)malloc(M * N * sizeof(float));
     h_B = (float*)malloc(N * P * sizeof(float));
@@ -66,21 +61,48 @@ int main() {
 
     cudaMalloc((void**)&d_A, M * N * sizeof(float));
     cudaMalloc((void**)&d_B, N * P * sizeof(float));
-    cudaMalloc((void**)&d_C, M * P * sizeof(float));
+    cudaMalloc((void**)&d_C, M * P * sizeof(float)); 
+
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&elapsedTime, start, stop);
+    printf("Time to allocate memory on device: %f ms\n", elapsedTime);
 
     randomInitialize(h_A, M * N); 
     randomInitialize(h_B, N * P); 
 
+    cudaEventRecord(start, 0);
+
     cudaMemcpy(d_A, h_A, M * N * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, N * P * sizeof(float), cudaMemcpyHostToDevice);
+
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&elapsedTime, start, stop);
+    printf("Time to copy data to device: %f ms\n", elapsedTime);
 
     dim3 blockDim(TILE_SIZE, TILE_SIZE);
     dim3 gridDim((P + blockDim.x - 1) / blockDim.x, (M + blockDim.y - 1) / blockDim.y);
 
-    matMulTiled<<<gridDim, blockDim>>>(d_A, d_B, d_C, M, N, P);
+    cudaEventRecord(start, 0);
+
+    optimizedMatMul<<<gridDim, blockDim>>>(d_A, d_B, d_C, M, N, P);
+
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&elapsedTime, start, stop);
+    printf("Time to execute kernel: %f ms\n", elapsedTime);
+
+    cudaEventRecord(start, 0);
+
     cudaMemcpy(h_C, d_C, M * P * sizeof(float), cudaMemcpyDeviceToHost);
 
-    // print statements (which should also include the print times for the other CUDA stuff)
+    cudaEventRecord(stop, 0);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&elapsedTime, start, stop);
+    printf("Time to copy data from device: %f ms\n", elapsedTime);
+
+    // print statements 
     printf("--------\n");
     printf("Matrix A:\n--------\n");
     for(int i = 0; i < M; ++i) {
